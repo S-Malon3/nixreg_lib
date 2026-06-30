@@ -29,5 +29,44 @@ sudo pacman -S cmake boost
 ```bash
 cmake -B build
 cmake --build build
-cmake --test-dir build --output-on-failure
+ctest --test-dir build --output-on-failure
 ```
+
+## Commit Conventions
+
+This project uses [Conventional Commits](https://www.conventionalcommits.org), with one addition: `wip:` is permitted for local, in-progress commits
+
+**Allowed types:** `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, 
+`build`, `ci`, `chore`, `revert`, `wip`
+
+### `wip:` commits
+
+`wip:` commits are for local checkpointing only and can not be pushed to `origin`.  Before Pushing, squash or fold all `wip:` commits into the meaninful commit(s) they belong to via interactive rebase
+
+```bash
+git rebase -i origin/main
+```
+
+In the rebase editor, mark `wip:` commits as `squash` (or `fixup` to discard 
+their message) and leave properly-typed commits as `pick`:
+
+```
+squash wip: doing a thing
+squash wip: did more for the thing
+pick   feat: the thing
+squash wip: making the thing better
+pick   perf: improved thing
+```
+
+A `pre-push` hook will reject pushes containing `wip:` commits as a safety net.
+
+### Setup
+
+After cloning, install git hooks once:
+```bash
+./scripts/install-hooks.sh
+```
+
+This installs:
+- `commit-msg` — validates commit messages against Conventional Commits via commitlint
+- `pre-push` — blocks pushes containing unsquashed `wip:` commits
