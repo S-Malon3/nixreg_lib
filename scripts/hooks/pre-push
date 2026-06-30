@@ -1,0 +1,24 @@
+#!/bin/sh
+# .git/hooks/pre-push (or scripts/hooks/pre-push if you version-control it)
+
+remote_ref="$1"
+remote_url="$2"
+
+while read local_ref local_sha remote_ref_name remote_sha; do
+  if [ "$local_sha" = "0000000000000000000000000000000000000000" ]; then
+    continue # branch deletion
+  fi
+
+  range="$remote_sha..$local_sha"
+  if [ "$remote_sha" = "0000000000000000000000000000000000000000" ]; then
+    range="$local_sha" # new branch, check all commits
+  fi
+
+  wip_commits=$(git log "$range" --grep="^wip:" --oneline)
+  if [ -n "$wip_commits" ]; then
+    echo "Push blocked: wip commits found, squash them first:"
+    echo "$wip_commits"
+    exit 1
+  fi
+done
+exit 0
