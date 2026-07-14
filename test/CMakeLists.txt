@@ -7,6 +7,7 @@ find_package(Boost REQUIRED COMPONENTS unit_test_framework)
 add_executable(nixreg_tests
 	test_main.cpp
 	test_bitbuffer.cpp
+	test_NixieDigitMap.cpp
 )
 
 target_link_libraries(nixreg_tests PRIVATE Boost::unit_test_framework nixreg)
